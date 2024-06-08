@@ -1,0 +1,33 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+model User {
+  id       Int        @id @default(autoincrement())
+  name     String?
+  email    String     @unique
+  password String
+  games    UserGame[]
+}
+
+model Game {
+  id    Int        @id @default(autoincrement())
+  title String
+  users UserGame[]
+}
+
+model UserGame {
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+
+  gameId Int
+  game   Game @relation(fields: [gameId], references: [id])
+
+  @@id([userId, gameId])
+}
